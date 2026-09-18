@@ -216,3 +216,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+# Дані лаби
+labs/lab01/data/
+**/data/
