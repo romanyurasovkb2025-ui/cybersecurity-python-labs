@@ -15,7 +15,7 @@ def evaluate_password_strength(
     forbidden: set,
     all_passwords: list,
 ) -> str:
-    """Оцінює рівень стійкості пароля згідно з варіантом."""
+    """Оцінює рівень стійкості пароля"""
     min_len = criteria["min_length"]
 
     if password in forbidden or len(password) < min_len:
