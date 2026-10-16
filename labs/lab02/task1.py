@@ -110,7 +110,7 @@ class Admin(User):
 
 
 class Session:
-    """Сеанс користувача (час у UTC)."""
+    """Сеанс користувача """
 
     def __init__(self, ip: str, login_time: datetime | None = None) -> None:
         now = _utcnow()
@@ -135,7 +135,7 @@ class AuditRecord:
 
 
 class AuditLog:
-    """Журнал аудиту (паролі в журнал не потрапляють)."""
+    """Журнал аудиту """
 
     def __init__(self) -> None:
         self.records: list[AuditRecord] = []
@@ -213,7 +213,7 @@ class UserAccount:
 
 
 def run_demo() -> None:
-    """Демонстрація роботи класів Завдання 1."""
+    """Демонстрація роботи класів """
     admin = Admin("alice_admin", "alice_admin@example.com", password="S3cret!pass")
     account = UserAccount(admin)
 

@@ -119,23 +119,29 @@ def audit_resource(
     )
 
 
-def write_csv(results: list[AuditResult], path: Path) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", newline="", encoding="utf-8") as fh:
-        writer = csv.DictWriter(fh, fieldnames=CSV_FIELDS)
-        writer.writeheader()
-        for r in results:
-            writer.writerow(
-                {
-                    "resource": r.resource,
-                    "score": r.score,
-                    "grade": r.grade,
-                    "status": r.status,
-                    "missing_headers": "; ".join(r.missing) or "None",
-                    "leaks": "; ".join(f"{k}: {v}" for k, v in r.leaks.items())
-                    or "None",
-                }
-            )
+def write_csv(results: list[AuditResult], path: Path) -> bool:
+    """Записує результати аудиту в CSV. Повертає False, якщо запис не вдався."""
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open("w", newline="", encoding="utf-8") as fh:
+            writer = csv.DictWriter(fh, fieldnames=CSV_FIELDS)
+            writer.writeheader()
+            for r in results:
+                writer.writerow(
+                    {
+                        "resource": r.resource,
+                        "score": r.score,
+                        "grade": r.grade,
+                        "status": r.status,
+                        "missing_headers": "; ".join(r.missing) or "None",
+                        "leaks": "; ".join(f"{k}: {v}" for k, v in r.leaks.items())
+                        or "None",
+                    }
+                )
+    except OSError as exc:
+        logger.error("Не вдалося записати CSV %s: %s", path, exc)
+        return False
+    return True
 
 
 def print_report(results: list[AuditResult]) -> None:
@@ -170,10 +176,7 @@ def run(headers_file: str, output_csv: str, strict: bool, log_level: str) -> int
 
     results = [audit_resource(url, hdrs, strict) for url, hdrs in data.items()]
     print_report(results)
-    try:
-        write_csv(results, Path(output_csv))
-    except OSError as exc:
-        logger.error("Не вдалося записати звіт: %s", exc)
+    if not write_csv(results, Path(output_csv)):
         return 1
     logger.info("Header audit report generated at %s", output_csv)
     return 0
