@@ -35,7 +35,7 @@ class User:
         password: str | None = None,
     ) -> None:
         self.username = username
-        self.email = email  # проходить через setter із валідацією
+        self.email = email  # проходить через setter із валідацією інкапусляція
         self.role = role
         self.active = active
         self.__password_hash: bytes = b""
@@ -74,6 +74,7 @@ class User:
     def deactivate(self) -> None:
         self.active = False
 
+    # поліфморфізм
     def __str__(self) -> str:
         state = "active" if self.active else "inactive"
         return f"User(username={self.username}, email={self.email}, role={self.role}, {state})"
@@ -110,7 +111,7 @@ class Admin(User):
 
 
 class Session:
-    """Сеанс користувача """
+    """Сеанс користувача"""
 
     def __init__(self, ip: str, login_time: datetime | None = None) -> None:
         now = _utcnow()
@@ -135,7 +136,7 @@ class AuditRecord:
 
 
 class AuditLog:
-    """Журнал аудиту """
+    """Журнал аудиту"""
 
     def __init__(self) -> None:
         self.records: list[AuditRecord] = []
@@ -213,8 +214,12 @@ class UserAccount:
 
 
 def run_demo() -> None:
-    """Демонстрація роботи класів """
+    """Демонстрація роботи класів"""
+    sdsda = User("alice_admin", "alice_admin@example.com", password="S3cret!pass")
     admin = Admin("alice_admin", "alice_admin@example.com", password="S3cret!pass")
+    print("\n, user:", sdsda)
+    print("\n, admin:", admin)
+    print("\n== Доступ через ключі ==")
     account = UserAccount(admin)
 
     print("== Вхід ==")
